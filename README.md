@@ -1,2 +1,2 @@
-# test-
-test for Git 
+# Read Me-
+2018 Summer self-learning stuff
