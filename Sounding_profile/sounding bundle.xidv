@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<object class="ucar.unidata.idv.control.RaobSoundingControl">
+    <property name="SoundingView">
+        <object class="ucar.unidata.idv.SoundingViewManager">
+            <property name="Idv">
+                <object idref="idv"/>
+            </property>
+            <property name="UniqueId">
+                <string><![CDATA[SoundingView]]></string>
+            </property>
+            <property name="Background">
+                <object class="java.awt.Color" id="id3">
+                    <constructor>
+                        <int>0</int>
+                        <int>0</int>
+                        <int>0</int>
+                    </constructor>
+                </object>
+            </property>
+            <property name="Foreground">
+                <object class="java.awt.Color" id="id4">
+                    <constructor>
+                        <int>255</int>
+                        <int>255</int>
+                        <int>255</int>
+                    </constructor>
+                </object>
+            </property>
+            <property name="Aliases">
+                <object class="java.util.ArrayList">
+                    <method name="add">
+                        <object class="ucar.unidata.idv.ViewDescriptor" id="id6">
+                            <property name="Name">
+                                <string><![CDATA[SoundingView]]></string>
+                            </property>
+                        </object>
+                    </method>
+                </object>
+            </property>
+            <property name="DisplayListColor">
+                <null class="java.awt.Color"/>
+            </property>
+            <property name="DisplayListFont">
+                <object class="java.awt.Font" id="id7">
+                    <constructor>
+                        <string><![CDATA[Default]]></string>
+                        <int>0</int>
+                        <int>12</int>
+                    </constructor>
+                </object>
+            </property>
+            <property name="ViewDescriptor">
+                <object idref="id6"/>
+            </property>
+            <property name="BooleanPropertiesForPersistence">
+                <object class="java.util.Hashtable">
+                    <method name="put">
+                        <string><![CDATA[View.AniReadout]]></string>
+                        <java.lang.Boolean>false</java.lang.Boolean>
+                    </method>
+                    <method name="put">
+                        <string><![CDATA[View.ShowDisplayList]]></string>
+                        <java.lang.Boolean>true</java.lang.Boolean>
+                    </method>
+                    <method name="put">
+                        <string><![CDATA[View.WaitVisible]]></string>
+                        <java.lang.Boolean>true</java.lang.Boolean>
+                    </method>
+                    <method name="put">
+                        <string><![CDATA[idv.viewmanager.logo.visible]]></string>
+                        <java.lang.Boolean>false</java.lang.Boolean>
+                    </method>
+                    <method name="put">
+                        <string><![CDATA[View.TopBarVisible]]></string>
+                        <java.lang.Boolean>true</java.lang.Boolean>
+                    </method>
+                    <method name="put">
+                        <string><![CDATA[View.Wireframe]]></string>
+                        <java.lang.Boolean>false</java.lang.Boolean>
+                    </method>
+                    <method name="put">
+                        <string><![CDATA[View.ShareViews]]></string>
+                        <java.lang.Boolean>false</java.lang.Boolean>
+                    </method>
+                </object>
+            </property>
+            <property name="Wireframe">
+                <boolean>false</boolean>
+            </property>
+            <property name="HasWindow">
+                <boolean>true</boolean>
+            </property>
+            <property name="ShowControlLegend">
+                <boolean>false</boolean>
+            </property>
+            <property name="LegendState">
+                <string><![CDATA[hidden]]></string>
+            </property>
+            <property name="DisplayBounds">
+                <object class="java.awt.Rectangle">
+                    <constructor>
+                        <int>0</int>
+                        <int>0</int>
+                        <int>494</int>
+                        <int>388</int>
+                    </constructor>
+                </object>
+            </property>
+            <property name="DisplayMatrix">
+                <parray class="double" length="16">0.65,0.0,0.0,0.0,0.0,0.65,0.0,0.0,0.0,0.0,0.65,0.0,0.0,0.0,0.0,1.0</parray>
+            </property>
+            <property name="LogoPosition">
+                <string><![CDATA[ll,10,-10]]></string>
+            </property>
+            <property name="LogoScale">
+                <float>0.5</float>
+            </property>
+        </object>
+    </property>
+    <property name="HodographView">
+        <object class="ucar.unidata.idv.HodographViewManager">
+            <property name="Idv">
+                <object idref="idv"/>
+            </property>
+            <property name="UniqueId">
+                <string><![CDATA[SoundingView]]></string>
+            </property>
+            <property name="Background">
+                <object idref="id3"/>
+            </property>
+            <property name="Foreground">
+                <object idref="id4"/>
+            </property>
+            <property name="Aliases">
+                <object class="java.util.ArrayList">
+                    <method name="add">
+                        <object class="ucar.unidata.idv.ViewDescriptor" id="id12">
+                            <property name="Name">
+                                <string><![CDATA[SoundingView]]></string>
+                            </property>
+                        </object>
+                    </method>
+                </object>
+            </property>
+            <property name="DisplayListColor">
+                <null class="java.awt.Color"/>
+            </property>
+            <property name="DisplayListFont">
+                <object idref="id7"/>
+            </property>
+            <property name="ViewDescriptor">
+                <object idref="id12"/>
+            </property>
+            <property name="DisplayBounds">
+                <object class="java.awt.Rectangle">
+                    <constructor>
+                        <int>0</int>
+                        <int>0</int>
+                        <int>0</int>
+                        <int>0</int>
+                    </constructor>
+                </object>
+            </property>
+            <property name="DisplayMatrix">
+                <parray class="double" length="16">0.7889652715746587,0.0,0.0,0.0,0.0,0.7889652715746587,0.0,0.0,0.0,0.0,0.7889652715746587,0.0,0.0,0.0,0.0,1.0</parray>
+            </property>
+            <property name="LogoPosition">
+                <string><![CDATA[ll,10,-10]]></string>
+            </property>
+            <property name="LogoScale">
+                <float>0.5</float>
+            </property>
+        </object>
+    </property>
+    <property name="DisplayName">
+        <string><![CDATA[Skew-T]]></string>
+    </property>
+    <property name="Color">
+        <object class="java.awt.Color" id="id14">
+            <constructor>
+                <int>255</int>
+                <int>0</int>
+                <int>255</int>
+            </constructor>
+        </object>
+    </property>
+    <property name="DisplayCategory">
+        <string><![CDATA[Soundings]]></string>
+    </property>
+    <property name="DisplayId">
+        <string><![CDATA[raob_skewt]]></string>
+    </property>
+    <property name="Viewer">
+        <object idref="idv"/>
+    </property>
+    <property name="ColorTable">
+        <object class="ucar.unidata.util.ColorTable">
+            <property name="Name">
+                <string><![CDATA[default]]></string>
+            </property>
+            <property name="Id">
+                <string><![CDATA[DEFAULT]]></string>
+            </property>
+            <property name="Table">
+                <array class="[F" length="3">
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9tu/UPjbv1D6JM98+tu/UPuSryT8JM98/IBHZPzbv1D9Nzc4/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAA</parray>
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHAAAAADw0evQ8tHr0PQdcNj00evQ9YZmxPYdcNj2d65Y9tHr0PcsKUj3hmbE9+CkPPgdcNj4So+Y+HeuWPikzRT40evQ+P8KjPksKUj5WUgE+YZmxPmzhYD54KQ8+gbhfPodcNj6NAA4+kqPmPphHvj6d65Y+o49tPqkzRT6u1xw+tHr0ProezD6/wqM+xWZ6PssKUj7Qrik+1lIBPtv12j7hmbE+5z2JPuzhYD7yhTc++CkPPv3M5z8BuF8/BIpLPwdcNj8KLiI/DQAOPw/R+j8So+Y/FXXSPxhHvj8bGak/HeuWPyC9gj8jj20/JmFZPykzRT8sBTA/LtccPzGpCD80evQ/N0zgPzoezD888Lc/P8KjP0KUjz9FZno/SDhmP0sKUj9N3D4/UK4pP1OAFT9WUgE/WSPtP1v12j9ex8Y/YZmxP2RrnT9nPYk/ag90P2zhYD9vs0w/coU3P3VXIz94KQ8/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP3h4eD9w8PE/aWlpP2Hh4j9aWlo/UtLTP0tLSz9Dw8Q/PDw8PzS0tT8tLS0/JaWmPx4eHj8Wlpc/Dw8PPweHiD8AAAA+8PDxPuHh4j7S0tM+w8PEPrS0tT6lpaY+lpaXPoeHiD5w8PE+UtLTPjS0tT4Wlpc98PDx</parray>
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHP3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/gAAAP0yMjT8ZGRk+y0tLPkjIyQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</parray>
+                </array>
+            </property>
+        </object>
+    </property>
+    <property name="Categories">
+        <object class="java.util.ArrayList">
+            <method name="add">
+                <object class="ucar.unidata.data.DataCategory">
+                    <property name="Name">
+                        <string><![CDATA[RAOB_SOUNDING]]></string>
+                    </property>
+                </object>
+            </method>
+            <method name="add">
+                <object class="ucar.unidata.data.DataCategory">
+                    <property name="Name">
+                        <string><![CDATA[display:raob_skewt]]></string>
+                    </property>
+                    <property name="ForDisplay">
+                        <boolean>false</boolean>
+                    </property>
+                </object>
+            </method>
+        </object>
+    </property>
+    <property name="DataSelection">
+        <object class="ucar.unidata.data.DataSelection">
+            <property name="Properties">
+                <object class="java.util.Hashtable">
+                    <method name="put">
+                        <string><![CDATA[Use_Progressive_Resolution]]></string>
+                        <java.lang.Boolean>true</java.lang.Boolean>
+                    </method>
+                    <method name="put">
+                        <string><![CDATA[Region_Selection_Option]]></string>
+                        <string><![CDATA[Use_Default_Area]]></string>
+                    </method>
+                    <method name="put">
+                        <string><![CDATA[Use_Display_Driver_Times]]></string>
+                        <java.lang.Boolean>false</java.lang.Boolean>
+                    </method>
+                </object>
+            </property>
+            <property name="GeoSelection">
+                <object class="ucar.unidata.data.GeoSelection">
+                    <property name="ScreenBound">
+                        <object class="java.awt.Rectangle">
+                            <constructor>
+                                <int>0</int>
+                                <int>0</int>
+                                <int>837</int>
+                                <int>570</int>
+                            </constructor>
+                        </object>
+                    </property>
+                </object>
+            </property>
+        </object>
+    </property>
+    <property name="MainPanelSize">
+        <object class="java.awt.Dimension">
+            <constructor>
+                <int>828</int>
+                <int>615</int>
+            </constructor>
+        </object>
+    </property>
+    <property name="MakeWindow">
+        <boolean>false</boolean>
+    </property>
+    <property name="DefaultView">
+        <string null="true"/>
+    </property>
+    <property name="DisplayListColor">
+        <object idref="id14"/>
+    </property>
+    <property name="ColorScaleInfo">
+        <object class="ucar.visad.display.ColorScaleInfo">
+            <property name="Name">
+                <string><![CDATA[RAOB data: goeseast.unidata.ucar.edu]]></string>
+            </property>
+            <property name="LabelColor">
+                <object class="java.awt.Color">
+                    <constructor>
+                        <int>192</int>
+                        <int>192</int>
+                        <int>192</int>
+                    </constructor>
+                </object>
+            </property>
+            <property name="LabelFont">
+                <object class="java.awt.Font">
+                    <constructor>
+                        <string><![CDATA[Century Gothic]]></string>
+                        <int>0</int>
+                        <int>14</int>
+                    </constructor>
+                </object>
+            </property>
+            <property name="ColorPalette">
+                <array class="[F" length="3">
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9tu/UPjbv1D6JM98+tu/UPuSryT8JM98/IBHZPzbv1D9Nzc4/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAA</parray>
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHAAAAADw0evQ8tHr0PQdcNj00evQ9YZmxPYdcNj2d65Y9tHr0PcsKUj3hmbE9+CkPPgdcNj4So+Y+HeuWPikzRT40evQ+P8KjPksKUj5WUgE+YZmxPmzhYD54KQ8+gbhfPodcNj6NAA4+kqPmPphHvj6d65Y+o49tPqkzRT6u1xw+tHr0ProezD6/wqM+xWZ6PssKUj7Qrik+1lIBPtv12j7hmbE+5z2JPuzhYD7yhTc++CkPPv3M5z8BuF8/BIpLPwdcNj8KLiI/DQAOPw/R+j8So+Y/FXXSPxhHvj8bGak/HeuWPyC9gj8jj20/JmFZPykzRT8sBTA/LtccPzGpCD80evQ/N0zgPzoezD888Lc/P8KjP0KUjz9FZno/SDhmP0sKUj9N3D4/UK4pP1OAFT9WUgE/WSPtP1v12j9ex8Y/YZmxP2RrnT9nPYk/ag90P2zhYD9vs0w/coU3P3VXIz94KQ8/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP3h4eD9w8PE/aWlpP2Hh4j9aWlo/UtLTP0tLSz9Dw8Q/PDw8PzS0tT8tLS0/JaWmPx4eHj8Wlpc/Dw8PPweHiD8AAAA+8PDxPuHh4j7S0tM+w8PEPrS0tT6lpaY+lpaXPoeHiD5w8PE+UtLTPjS0tT4Wlpc98PDx</parray>
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHP3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/gAAAP0yMjT8ZGRk+y0tLPkjIyQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</parray>
+                </array>
+            </property>
+        </object>
+    </property>
+    <property name="HadDataChoices">
+        <boolean>true</boolean>
+    </property>
+    <property name="OriginalDataChoicesLabel">
+        <string><![CDATA[RAOB Data]]></string>
+    </property>
+    <property name="TemplateName">
+        <string><![CDATA[sounding bundle]]></string>
+    </property>
+    <property name="ZPosition">
+        <double>-1.0</double>
+    </property>
+    <property name="UseFastRendering">
+        <boolean>true</boolean>
+    </property>
+    <property name="AnimationInfo">
+        <object class="ucar.visad.display.AnimationInfo">
+            <property name="AnimationSetInfo">
+                <object class="ucar.visad.display.AnimationSetInfo"/>
+            </property>
+        </object>
+    </property>
+    <property name="DisplayListTemplate">
+        <string><![CDATA[%shortname% - %displayname% %timestamp%]]></string>
+    </property>
+    <property name="LegendLabelTemplate">
+        <string><![CDATA[%shortname% - %displayname%]]></string>
+    </property>
+    <property name="ExtraLabelTemplate">
+        <string stringvalue=""/>
+    </property>
+    <property name="UniqueId">
+        <string><![CDATA[sharable_1529593831284_0_2553064326804575_34]]></string>
+    </property>
+    <field name="isProgressiveResolution">
+        <java.lang.Boolean>false</java.lang.Boolean>
+    </field>
+    <field name="reloadFromBounds">
+        <java.lang.Boolean>false</java.lang.Boolean>
+    </field>
+    <field name="matchDisplayRegion">
+        <java.lang.Boolean>false</java.lang.Boolean>
+    </field>
+</object>
