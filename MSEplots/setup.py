@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="MSEplots_pkg",
-    version="1.0.5",
+    version="1.0.6",
     author="Wei-Ming Tsai",
     author_email="wxt108@rsmas.miami.edu",
     description="A package for MSE plots",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/weiming9115/Working-Space/tree/master/MSEplots",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
