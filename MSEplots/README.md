@@ -1,5 +1,5 @@
 ### MSEplots project
-
+------
 A package built for the MSE analysis of sounding data/ model output which provides required vertical profiles of thermodynamic parameters.
 
 1. Required paramters: Air temperature, Dewpoint, Pressure, Altitude. NOT specifically for sounding data!
