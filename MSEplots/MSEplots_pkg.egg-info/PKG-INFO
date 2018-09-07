@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: MSEplots-pkg
+Version: 1.0.5
+Summary: A package for MSE plots
+Home-page: https://github.com/pypa/sampleproject
+Author: Wei-Ming Tsai
+Author-email: wxt108@rsmas.miami.edu
+License: UNKNOWN
+Description: this is a package for moist static energy (MSE) plots. 
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
