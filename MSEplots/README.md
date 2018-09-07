@@ -8,7 +8,3 @@ A package built for the MSE analysis of sounding data/ model output which provid
 3. Plotting options: thermo.plots, theta.plots, and mesd_plots.
 
 More tests are needed to see if the calculated CAPE based on corresponds "quantitatively" and "graphically" to the MSE plot.
-<<<<<<< HEAD
-
-=======
->>>>>>> 218a17f17700e975c47ece33c9b2a9c2b4a32074
