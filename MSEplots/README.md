@@ -1,5 +1,5 @@
 ### MSEplots project
-pip install MSEplots-pkg
+#### pip install MSEplots-pkg
 ------
 A package built for the MSE analysis of sounding data/ model output which provides required vertical profiles of thermodynamic parameters.
 
