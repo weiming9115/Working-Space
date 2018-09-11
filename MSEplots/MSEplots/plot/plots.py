@@ -2,14 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from MSEplots.calc.thermo_calc import *
 
-def theta_plots(pressure,altitude,temperature,dewpoint):
+def theta_plots(pressure,temperature,mixing_ratio):
     """
     plots for vertical profiles of potential temperature, equivalent potential temperature, 
     and saturated equivalent potential temperature
 
     """
     lev=find_nearest(pressure,100)
-    [theta,theta_e,theta_es]=theta_calc(pressure,altitude,temperature,dewpoint)
+    [theta,theta_e,theta_es]=theta_calc(pressure,temperature,mixing_ratio)
     
     plt.figure(figsize=(7,7))
     plt.plot(theta[:lev],pressure[:lev],'-ok')
@@ -21,7 +21,8 @@ def theta_plots(pressure,altitude,temperature,dewpoint):
     plt.legend(['$\\theta$','$\\theta_e$','$\\theta_{es}$'],loc=1)
     plt.grid()
 
-def thermo_plots(pressure,altitude,temperature,dewpoint):
+
+def thermo_plots(pressure,temperature,mixing_ratio):
     """"
     plots for vertical profiles of temperature, dewpoint, mixing ratio and relative humidity.
     
@@ -37,8 +38,10 @@ def thermo_plots(pressure,altitude,temperature,dewpoint):
     -------
     """
     
-    Temp=temperature;Temp_dew=dewpoint;
-    Tp=Tp_calc(pressure,altitude,temperature,dewpoint)
+    Temp=temperature
+    Temp_dew=Td_calc(pressure,temperature,mixing_ratio)
+    q=mixing_ratio
+    Tp=Tp_calc(pressure,temperature,mixing_ratio)
     
     lev=find_nearest(pressure,100)
     
@@ -53,8 +56,8 @@ def thermo_plots(pressure,altitude,temperature,dewpoint):
     plt.gca().invert_yaxis()
     plt.legend(['Temp','Temp_Dew','Temp_Parcel'],loc=1)
     plt.grid()
-
-    [q,qs]=q_calc(pressure,Temp,Temp_dew)
+    
+    qs = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(Temp*units.degC),pressure*units.mbar)
     # Relative humidity
     RH=q/qs*100; # Relative humidity
 
@@ -73,37 +76,43 @@ def thermo_plots(pressure,altitude,temperature,dewpoint):
     plt.tight_layout()
     plt.show()
 
-def msed_plots(pressure,altitude,temperature,dewpoint):
+
+def msed_plots(pressure,temperature,mixing_ratio,altitude=None):
     """
     plotting the summarized static energy diagram with annotations and thermodynamic parameters
     """
-    Cp=1004;
-    Lv=(2500.8-2.36*temperature+0.0016*temperature**2-0.00006*temperature**3)*1000;
     
-    [dse,mse,mse_s]=mse_calc(pressure,altitude,temperature,dewpoint)
+    if (altitude is None):
+        altitude = np.zeros((np.size(temperature))) # surface is 0 meter
+        for i in range(1,np.size(temperature)):
+            altitude[i]=mpcalc.thickness_hydrostatic(pressure[:i+1]*units.mbar,temperature[:i+1]*units.degC).magnitude; # Hypsometric Eq. for height
+        [dse,mse,mse_s]=mse_calc(pressure,temperature,mixing_ratio,altitude)
+    else:
+        [dse,mse,mse_s]=mse_calc(pressure,temperature,mixing_ratio,altitude)
+
     # MSE vertical profiles
     h=plt.figure(figsize=[10,8])
     plt.plot(dse[:],pressure[:],'-k',linewidth=2)
     plt.plot(mse[:],pressure[:],'-b',linewidth=2)
     plt.plot(mse_s[:],pressure[:],'-r',linewidth=2)
 
+    qs = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(temperature*units.degC),pressure*units.mbar)
     # different Relative humidity 
-    [q,qs]=q_calc(pressure,temperature,dewpoint)
-    qr=np.zeros((9,np.size(qs))); mse_r=qr# container
+    qr=np.zeros((9,np.size(qs.magnitude))); mse_r=qr# container
     for i in range(9):
         qr[i,:]=qs*0.1*(i+1);
-        mse_r[i,:]=(Cp*(temperature+273.15)+9.8*altitude+Lv*qr[i,:])/1000;
+        mse_r[i,:]=(Cp_d.magnitude*(temperature+273.15)+g.magnitude*altitude+Lv.magnitude*qr[i,:])/1000;
 
     for i in range(9):
         plt.plot(mse_r[i,:],pressure[:],'-',color='grey',linewidth=0.7)
         plt.text(mse_r[i,3]-1,pressure[3],str((i+1)*10))
 
     # drawing LCL
-    [LCL,lcl_idx]=lcl_calc(pressure,altitude,temperature,dewpoint)
+    [LCL,lcl_idx]=lcl_calc(pressure,temperature,mixing_ratio)
     line_lcl=np.squeeze(np.ones((1,300))*LCL);
     plt.plot(np.linspace(280,400,300),line_lcl,'--',color='orange')
     
-    [LFC,lfc_idx]=lfc_calc(pressure,altitude,temperature,dewpoint)
+    [LFC,lfc_idx]=lfc_calc(pressure,temperature,mixing_ratio)
     line_lfc=np.squeeze(np.ones((1,300))*LFC);
     plt.plot(np.linspace(280,400,300),line_lfc,'--',color='magenta')
     
@@ -111,9 +120,9 @@ def msed_plots(pressure,altitude,temperature,dewpoint):
     mse_p=np.squeeze(np.ones((1,np.size(temperature)))*mse[0]);
     
     # illustration of CAPE
-    [EL,EL_idx]=el_calc(pressure,altitude,temperature,dewpoint)
-    [CAPE,CIN]=cape_cin_calc(pressure,altitude,temperature,dewpoint)
-    cwv=cwv_calc(pressure,altitude,temperature,dewpoint)
+    [EL,EL_idx]=el_calc(pressure,temperature,mixing_ratio)
+    [CAPE,CIN]=cape_cin_calc(pressure,temperature,mixing_ratio)
+    [cwv,cwvs,crh]=cwv_calc(pressure,temperature,mixing_ratio)
     
     plt.plot(mse_p[:],pressure[:],color='green',linewidth=2)
     plt.fill_betweenx(pressure[lcl_idx:EL_idx+1],mse_p[lcl_idx:EL_idx+1],mse_s[lcl_idx:EL_idx+1],interpolate=True
@@ -147,14 +156,14 @@ def msed_plots(pressure,altitude,temperature,dewpoint):
 
     # Text parts
     plt.text(290,pressure[3],'RH (%)',fontsize=11,color='k')
-    plt.text(285,250,'CAPE = '+str(np.around(CAPE,decimals=2))+' [J/kg]',fontsize=14,color='green');
-    plt.text(285,300,'CIN = '+str(np.around(CIN,decimals=2))+' [J/kg]',fontsize=14,color='green')
-    plt.text(285,350,'LCL = '+str(np.around(LCL,decimals=2))+' [hpa]',fontsize=14,color='orange');
-    plt.text(285,400,'LFC = '+str(np.around(LFC,decimals=2))+' [hpa]',fontsize=14,color='magenta');
-    plt.text(285,450,'CWV = '+str(np.around(cwv,decimals=2))+' [mm]',fontsize=14,color='deepskyblue');
+    plt.text(285,250,'CAPE = '+str(np.around(CAPE.magnitude,decimals=2))+' [J/kg]',fontsize=14,color='green');
+    plt.text(285,300,'CIN = '+str(np.around(CIN.magnitude,decimals=2))+' [J/kg]',fontsize=14,color='green')
+    plt.text(285,350,'LCL = '+str(np.around(LCL.magnitude,decimals=2))+' [hpa]',fontsize=14,color='orange');
+    plt.text(285,400,'LFC = '+str(np.around(LFC.magnitude,decimals=2))+' [hpa]',fontsize=14,color='magenta');
+    plt.text(285,450,'CWV = '+str(np.around(cwv.magnitude,decimals=2))+' [mm]',fontsize=14,color='deepskyblue');
+    plt.text(285,500,'CRH = '+str(np.around(crh,decimals=2))+' [%]',fontsize=14,color='blue');
     plt.text(330,220,'entrain: \n 10,5,2 km',fontsize=12,color='green');
     plt.text(mse[0]-3,400,'Parcel h',fontsize=12,color='green')
     plt.legend(['dry air','moist air','saturated air'],fontsize=12,loc=1);
 
     plt.show()
-

@@ -1,6 +1,7 @@
 import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units
+from metpy.constants import Cp_d,Lv,Rd,g 
 
 def find_nearest(array, value):
     array = np.asarray(array)
@@ -27,182 +28,133 @@ def Td_calc(pressure,temperature,mixing_ratio):
 
 def q_calc(pressure,temperature,dewpoint):
     """"
-    calculating mixing ratio (q) from dewpoint
+    calculating mixing ratio (q) and saturated mixing ratio (qs) from dewpoint
     """
     Temp=temperature;Temp_dew=dewpoint;
-    q=np.zeros((np.size(Temp)));qs=np.zeros((np.size(Temp)));
-    for z in np.linspace(0,np.size(Temp)-1,np.size(Temp),dtype=int):
-    # CC-equation for specific humidity retrival
-        e=6.1094*np.exp(17.625*Temp_dew[z]/(Temp_dew[z]+243.04))
-        qz=0.622*e/(pressure[z]-e)
-        es=6.1094*np.exp(17.625*Temp[z]/(Temp[z]+243.04))
-        qsz=0.622*es/(pressure[z]-es)
-        if qz < 0 or qz < 1e-7 or qz > 3e-2:
-            q[z]=0;qs[z]=0 
-        else:
-            q[z]=qz;qs[z]=qsz
-    return (q,qs)
+    q = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(Temp_dew*units.degC),pressure*100*units.pascal)
+    qs = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(Temp*units.degC),pressure*100*units.pascal)
+    return (q.magnitude,qs.magnitude)
 
-def mse_calc(pressure,altitude,temperature,dewpoint):
+def mse_calc(pressure,temperature,mixing_ratio,altitude=None):
     """
-    [dse,mse,mse_s] = mse_calc(pressure, altitude, temperature, dewpoint)
+    [dse,mse,mse_s] = mse_calc(pressure, temperature, mixing_ratio, altitude [optional])
         dse   --> dry static energy
         mse   --> moist static energy
         mse_s --> saturatued moist static energy
     
     calculatiing dry static energy, moist static energy and saturated moist static energy
+    using the hypsometric equation to derive the altitude at each pressure level (assume H_sfc=0 m)
     """
-    pressure=pressure;Temp=temperature;Temp_dew=dewpoint
-    # Parameters
-    Cp=1004; # J/(kg K)
-    Lv=(2500.8-2.36*Temp+0.0016*Temp**2-0.00006*Temp**3)*1000; # latent heat J/kg
-    Rd=287.15 # J/kg
+    pressure=pressure;Temp=temperature;q=mixing_ratio
+    qs = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(Temp*units.degC),pressure*100*units.pascal).magnitude
     
-    # (a). Calculate equivalent potential temperature (theta_e) and saturated theta_e
-    [q,qs]=q_calc(pressure,Temp,Temp_dew)
-    theta_e=(Temp+273.15+Lv*q/Cp)*(1000/pressure)**(Rd/Cp);
-    es=6.1094*np.exp(17.625*Temp/(Temp+243.04));
-    theta_es=(Temp+273.15+Lv*qs/Cp)*(1000/pressure)**(Rd/Cp);
-    # dry air: theta_e-->theta
-    theta=(Temp+273.15)*(1000/pressure)**(Rd/Cp);
-
-    # (b). static energy 
-    dse=(Cp*(Temp+273.15)+9.8*altitude)/1000 # dry static energy [KJ/kg]
-    mse=(Cp*(Temp+273.15)+9.8*altitude+Lv*q)/1000; # moist static energy [KJ/kg]
-    mse_s=(Cp*(Temp+273.15)+9.8*altitude+Lv*qs)/1000; # moist static energy [KJ/kg]
+    if (altitude is None):
+        altitude = np.zeros((np.size(Temp))) # surface is 0 meter
+        for i in range(1,np.size(Temp)):
+            altitude[i]=mpcalc.thickness_hydrostatic(pressure[:i+1]*units.mbar,Temp[:i+1]*units.degC).magnitude; # Hypsometric Eq. for height
+    else:
+        altitude=altitude; # meter
+    
+    # static energy 
+    dse=(Cp_d.magnitude*(Temp+273.15)+g.magnitude*altitude)/1000 # dry static energy [KJ/kg]
+    mse=(Cp_d.magnitude*(Temp+273.15)+g.magnitude*altitude+Lv.magnitude*q)/1000; # moist static energy [KJ/kg]
+    mse_s=(Cp_d.magnitude*(Temp+273.15)+g.magnitude*altitude+Lv.magnitude*qs)/1000; # moist static energy [KJ/kg]
     
     return(dse,mse,mse_s)
 
-def theta_calc(pressure,altitude,temperature,dewpoint):
+def theta_calc(pressure,temperature,mixing_ratio):
     """
-    """
-    pressure=pressure;Temp=temperature;Temp_dew=dewpoint
-    # Parameters
-    Cp=1004; # J/(kg K)
-    Lv=(2500.8-2.36*Temp+0.0016*Temp**2-0.00006*Temp**3)*1000; # latent heat J/kg
-    Rd=287.15 # J/kg
+    [theta,theta_e,theta_es] = theta_calc(pressure, temperature, mixing_ratio)
+    dse   --> dry static energy
+    mse   --> moist static energy
+    mse_s --> saturatued moist static energy
+    """    
+    pressure=pressure;Temp=temperature;q=mixing_ratio
     
-    # (a). Calculate equivalent potential temperature (theta_e) and saturated theta_e
-    [q,qs]=q_calc(pressure,Temp,Temp_dew)
-    theta_e=(Temp+273.15+Lv*q/Cp)*(1000/pressure)**(Rd/Cp);
+    # Calculate equivalent potential temperature (theta_e) and saturated theta_e
+    qs=mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(Temp*units.degC),pressure*100*units.pascal)
+    theta_e=(Temp+273.15+Lv.magnitude*q/Cp_d.magnitude)*(1000/pressure)**(Rd.magnitude*1000/Cp_d.magnitude);
     es=6.1094*np.exp(17.625*Temp/(Temp+243.04));
-    theta_es=(Temp+273.15+Lv*qs/Cp)*(1000/pressure)**(Rd/Cp);
+    theta_es=(Temp+273.15+Lv.magnitude*qs/Cp_d.magnitude)*(1000/pressure)**(Rd.magnitude*1000/Cp_d.magnitude);
     # dry air: theta_e-->theta
-    theta=(Temp+273.15)*(1000/pressure)**(Rd/Cp);
+    theta=(Temp+273.15)*(1000/pressure)**(Rd.magnitude*1000/Cp_d.magnitude);
     
     return(theta,theta_e,theta_es)
 
-def cwv_calc(pressure,altitude,temperature,dewpoint):
+def cwv_calc(pressure,temperature,mixing_ratio):
     """
-    calculatiing vertically integrated water vapor [mm]
+    [cwv,cwvs,crh] = cwv_calc(pressure,temperature,mixing_ratio)
+    
+    calculatiing column water vapor, saturated column water vapor and column relative humidity
     """
-    q=q_calc(pressure,temperature,dewpoint)[0]
+    Temp=temperature;
+    Td=Td_calc(pressure,temperature,mixing_ratio)
+    p_PWtop = max(200*units.mbar, min(pressure*units.mbar) +1*units.mbar) # integrating until 200mb 
+    cwv = mpcalc.precipitable_water(Td*units.degC,pressure*units.mbar, top=p_PWtop)
+    cwvs = mpcalc.precipitable_water(Temp*units.degC,pressure*units.mbar, top=p_PWtop)
+    crh = (cwv/cwvs).magnitude *100. 
     
-    cwv=np.trapz(q,altitude); # column water vapor [mm]
-    
-    return cwv
+    return (cwv,cwvs,crh)
 
-def lcl_calc(pressure,altitude,temperature,dewpoint):
+def lcl_calc(pressure,temperature,mixing_ratio):
     """
-    [LCL,idx]=lcl_calc(pressure,altitude,temperature,dewpoint)
+    [LCL,idx] = lcl_calc(pressure,altitude,temperature,dewpoint)
+    
     calculating interpolated lifting condesation level (LCL) and the corresponding index
     """    
-    Temp=temperature;q=q_calc(pressure,temperature,dewpoint)[0];
-    Cp=1004;
-    
-    # (d). Lifting condenstation level (LCL)
+    Temp=temperature;
+    Td=Td_calc(pressure,temperature,mixing_ratio);
 
-    qs=q_calc(pressure,temperature,dewpoint)[1]
-    for x in np.linspace(1,20,20,dtype=int):
-        Tpd=Temp[0]-9.8/Cp*(altitude[x]-altitude[0])
-        esp=6.1094*np.exp(17.625*Tpd/(Tpd+243.04));
-        qsp=0.622*esp/(pressure[x]-esp)   
-        if q[0]-qsp > 0: # when q is larger than qs for the air parcel -> condensate
-            LCL=np.interp(q[0],[qsp,qs[0]],[pressure[x],pressure[0]]);
-            lcl_idx=x
-            break
-        tmp=qsp
-        
-    return (LCL,lcl_idx)
+    [lcl_pressure, lcl_temperature] = mpcalc.lcl(pressure[0]*units.mbar, Temp[0]*units.degC, Td[0]*units.degC)
+    lcl_index = np.argmin(np.abs(pressure - lcl_pressure.magnitude))
 
-def Tp_calc(pressure,altitude,temperature,dewpoint):
+    return(lcl_pressure, lcl_index)
+
+def Tp_calc(pressure,temperature,mixing_ratio):
     """"
     calculating the temperature of air parcel lifting from the bottom level of sounding following
     the pesudo moist adiabatic process.
     """
     Temp=temperature;
-    lcl_idx=lcl_calc(pressure,altitude,temperature,dewpoint)[1];
-    Cp=1004;Rd=287.15
+    Td = Td_calc(pressure,temperature,mixing_ratio);
+    Tp = mpcalc.parcel_profile(pressure*units.mbar, Temp[0]*units.degC, Td[0]*units.degC).to('degC');
     
-    # parcel temperature below LCL
-    Tp=np.zeros([np.shape(Temp)[0]]);
-    if lcl_idx == 0:
-        Tp[0]=Temp[0]
-    else:
-        Tp[:lcl_idx]=Temp[:lcl_idx]
-        for x in range(lcl_idx):
-            Tp[x+1]=Tp[x]-9.8/Cp*(altitude[x+1]-altitude[x])
+    return Tp.magnitude
 
-    # parcel temperature above LCL
-    a=lcl_idx; #index for LCL
-
-    for x in np.linspace(a,np.shape(Tp)[0]-2,np.shape(Tp)[0]-a-1,dtype=int):    
-        esp=6.1094*np.exp(17.625*Tp[x]/(Tp[x]+243.04))
-        qsp=0.622*esp/(pressure[x]-esp)   
-        Lvp=(2500.8-2.36*Tp[x]+0.0016*Tp[x]**2-0.00006*Tp[x]**3)*1000; # latent heat J/kg
-        lm=9.8*(1+Lvp*qsp/(Rd*(Tp[x]+273.15)))/(Cp+Lvp**2*qsp*0.622/(Rd*(Tp[x]+273.15)**2)) # moist adiabatic lapse rate
-        if qsp ==0:
-            lev_top=x;break
-        Tp[x+1]=Tp[x]-lm*(altitude[x+1]-altitude[x])
-    return Tp
-
-def lfc_calc(pressure,altitude,temperature,dewpoint):
+def lfc_calc(pressure,temperature,mixing_ratio):
     """
-    calculating the level of free convection (LFC)
+    calculating the level of free convection (LFC) and the corresponding index
     """
-    Tp=Tp_calc(pressure,altitude,temperature,dewpoint)
     Temp=temperature
-    # finding EL
-    #k=0
-    lcl_idx=lcl_calc(pressure,altitude,temperature,dewpoint)[1]
-    for index, item in enumerate(Tp-Temp):
-         if index > lcl_idx and item > 0:
-            LFC=pressure[index];lfc_idx=index;break
+    Td=Td_calc(pressure,temperature,mixing_ratio);
+    [lfc_pressure,lfc_temperature] = mpcalc.lfc(pressure*units.mbar,Temp*units.degC,Td*units.degC)
+    lfc_idx = np.argmin(np.abs(pressure - lfc_pressure.magnitude))
     
-    return (LFC,lfc_idx)
+    return (lfc_pressure,lfc_idx)
 
-def el_calc(pressure,altitude,temperature,dewpoint):
+def el_calc(pressure,temperature,mixing_ratio):
     """
-    [EL,idx]=el_calc(pressure,altitude,temperature)
+    [EL,idx] = el_calc(pressure,altitude,temperature)
     calculating the equilibrium level of lifting air parcel and the corresponding index
     """
-    Tp=Tp_calc(pressure,altitude,temperature,dewpoint)
     Temp=temperature
-    # finding EL
-    #k=0
-    lcl_idx=lcl_calc(pressure,altitude,temperature,dewpoint)[1]
-    for index, item in enumerate(Tp-Temp):
-         if index > lcl_idx and item > 0:
-            LFC=pressure[index];lfc_idx=index;break
+    Td = Td_calc(pressure,temperature,mixing_ratio);
+    el_pressure,el_temperature = mpcalc.el(pressure*units.mbar,Temp*units.degC,Td*units.degC)
+    el_index = np.argmin(np.abs(pressure - el_pressure.magnitude))
     
-    for index, item in enumerate(Tp-Temp):
-         if index > lfc_idx and item < 0:
-            EL=pressure[index];EL_idx=index;break
-        
-    return (EL,EL_idx)
+    return(el_pressure, el_index)
 
-def cape_cin_calc(pressure,altitude,temperature,dewpoint):
+def cape_cin_calc(pressure,temperature,mixing_ratio):
     """
-    calculating CAPE and CIN based on Metpy (metpy.calc.cape_cin)
+    [cape,cin] = cape_cin_calc(pressure,temperature,mixing_ratio)
+    calculating CAPE and CIN 
     """
-    import metpy.calc as mpcalc
-    from metpy.units import units
-    
-    Temp=temperature;Temp_dew=dewpoint
-    Tp=Tp_calc(pressure,altitude,temperature,dewpoint)
-    lev_top=el_calc(pressure,altitude,temperature,dewpoint)[1]
+    Temp=temperature
+    Td=Td_calc(pressure,temperature,mixing_ratio)
+    Tp=Tp_calc(pressure,temperature,mixing_ratio)
+    lev_top=el_calc(pressure,Temp,mixing_ratio)[1]
     # calculating CAPE and CIN based on MetPy 
-    [CAPE,CIN]=mpcalc.cape_cin(pressure[:lev_top]*1000*units.pascal,Temp[:lev_top]*units.degC,Temp_dew[:lev_top]*units.degC,Tp[:lev_top]*units.degC)
-    return (CAPE.magnitude,CIN.magnitude)
-
+    [CAPE,CIN]=mpcalc.cape_cin(pressure[:lev_top]*100*units.pascal,Temp[:lev_top]*units.degC,Td[:lev_top]*units.degC,Tp[:lev_top]*units.degC)
+    
+    return (CAPE,CIN)
 

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="MSEplots_pkg",
-    version="1.0.6",
+    version="1.0.12",
     author="Wei-Ming Tsai",
     author_email="wxt108@rsmas.miami.edu",
     description="A package for MSE plots",
@@ -18,4 +18,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    install_requires=['metpy']
 )
