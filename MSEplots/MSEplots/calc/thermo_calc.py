@@ -20,7 +20,7 @@ def Td_calc(pressure,temperature,mixing_ratio):
         for x in tmp:
             e=6.1094*np.exp(17.625*x/(x+243.04))
             qs=0.622*e/(pressure[z]-e)
-            if np.abs((qs-q[z])/qs) < 0.05:
+            if np.abs((qs-q[z])/qs) < 0.01:
                 Tdz=x;
                 break
         Td[z]=Tdz
