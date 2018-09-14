@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="MSEplots_pkg",
-    version="1.0.14",
+    version="1.0.18",
     author="Wei-Ming Tsai",
     author_email="wxt108@rsmas.miami.edu",
-    description="A package for static energy analysis and relevant plots",
+    description="A package for static energy plots based on MetPy",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/weiming9115/Working-Space/tree/master/MSEplots",

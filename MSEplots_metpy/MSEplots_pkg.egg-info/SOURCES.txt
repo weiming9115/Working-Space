@@ -1,10 +1,7 @@
 README.md
 setup.py
 MSEplots/__init__.py
-MSEplots/calc/__init__.py
-MSEplots/calc/thermo_calc.py
-MSEplots/plot/__init__.py
-MSEplots/plot/plots.py
+MSEplots/plots.py
 MSEplots_pkg.egg-info/PKG-INFO
 MSEplots_pkg.egg-info/SOURCES.txt
 MSEplots_pkg.egg-info/dependency_links.txt
