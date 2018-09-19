@@ -59,7 +59,7 @@ def thermo_plots(pressure,temperature,mixing_ratio):
     plt.grid()
     
     plt.tight_layout()
-    plt.show()
+    return (plt)
 
 def theta_plots(pressure,temperature,mixing_ratio):
     """
@@ -82,7 +82,7 @@ def theta_plots(pressure,temperature,mixing_ratio):
     plt.gca().invert_yaxis()
     plt.legend(['$\\theta$','$\\theta_e$','$\\theta_{es}$'],loc=1)
     plt.grid()
-
+    return (plt)
 
 def msed_plots(pressure,temperature,mixing_ratio,altitude=None):
     """
@@ -189,5 +189,5 @@ def msed_plots(pressure,temperature,mixing_ratio,altitude=None):
     plt.text(330,220,'entrain: \n 10,5,2 km',fontsize=12,color='green');
     plt.text(mse[0]-3,400,'Parcel h',fontsize=12,color='green')
     plt.legend(['dry air','moist air','saturated air'],fontsize=12,loc=1);
+    return (plt)
 
-    plt.show()
