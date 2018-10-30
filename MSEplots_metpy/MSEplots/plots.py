@@ -120,10 +120,11 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
 
     #================================================
     # plotting MSE vertical profiles
-    h = plt.figure(figsize=[10,8])
-    plt.plot(dse,p,'-k',linewidth=2)
-    plt.plot(mse,p,'-b',linewidth=2)
-    plt.plot(mse_s,p,'-r',linewidth=2)
+    fig = plt.figure(figsize=[12,8])
+    ax = fig.add_axes([0.1,0.1,0.6,0.8])
+    ax.plot(dse,p,'-k',linewidth=2)
+    ax.plot(mse,p,'-b',linewidth=2)
+    ax.plot(mse_s,p,'-r',linewidth=2)
     
     # mse based on different percentages of relative humidity
     qr = np.zeros((9,np.size(qs)))*units('kilogram/kilogram'); mse_r = qr*units('joule/kilogram')# container
@@ -132,8 +133,8 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
         mse_r[i,:] = mpcalc.moist_static_energy(altitude,T,qr[i,:])
 
     for i in range(9):
-        plt.plot(mse_r[i,:],p[:],'-',color='grey',linewidth=0.7)
-        plt.text(mse_r[i,3].magnitude/1000-1,p[3].magnitude,str((i+1)*10))
+        ax.plot(mse_r[i,:],p[:],'-',color='grey',linewidth=0.7)
+        ax.text(mse_r[i,3].magnitude/1000-1,p[3].magnitude,str((i+1)*10))
                 
     # drawing LCL and LFC levels
     [lcl_pressure, lcl_temperature] = mpcalc.lcl(p[0], T[0], Td[0])
@@ -153,15 +154,15 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
     [CAPE,CIN] = mpcalc.cape_cin(p[:el_idx],T[:el_idx],Td[:el_idx],Tp[:el_idx])
     
     plt.plot(mse_p,p,color='green',linewidth=2)
-    plt.fill_betweenx(p[lcl_idx:el_idx+1],mse_p[lcl_idx:el_idx+1],mse_s[lcl_idx:el_idx+1],interpolate=True
+    ax.fill_betweenx(p[lcl_idx:el_idx+1],mse_p[lcl_idx:el_idx+1],mse_s[lcl_idx:el_idx+1],interpolate=True
                     ,color='green',alpha='0.3')
 
-    plt.fill_betweenx(p,dse,mse,color='deepskyblue',alpha='0.5')
-    plt.xlim([280,380])
-    plt.xlabel('Specific static energies: s, h, hs [kJ kg$^{-1}$]',fontsize=14)
-    plt.ylabel('Pressure [hpa]',fontsize=14)
-    plt.xticks(fontsize=12);plt.yticks(fontsize=12)
-    plt.ylim(1030,150)
+    ax.fill_betweenx(p,dse,mse,color='deepskyblue',alpha='0.5')
+    ax.set_xlabel('Specific static energies: s, h, hs [kJ kg$^{-1}$]',fontsize=14)
+    ax.set_ylabel('Pressure [hpa]',fontsize=14)
+    ax.set_xticks([280,300,320,340,360,380])
+    ax.set_xlim([280,390])
+    ax.set_ylim(1030,150)
     
     if entrain is True:
     # Depict Entraining parcels
@@ -196,31 +197,38 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
                 # Plot the curve        
                 plt.plot( hent[0:ELindex_ent+2], p[0:ELindex_ent+2], linewidth=0.25, color='g')
                 # Keep a list for a histogram plot (detrainment profile)  
-                ELps.append( p[ELindex_ent].magnitude )
+                if p[ELindex_ent].magnitude < lfc_pressure.magnitude: # buoyant parcels only
+                    ELps.append( p[ELindex_ent].magnitude )
                 
         # Plot a crude histogram of parcel detrainment levels
         NBINS = 50
         hist, pbins = np.histogram(ELps[:], bins=NBINS)
-        norm = 20/max(hist[0:NBINS-2]) # scale the plot to 20 kJ/kg for the eye 
-            
-        plt.plot( 360+hist[:]*norm, pbins[1:], color='purple')
-        plt.plot( [360,360], [1100,0])
-        plt.annotate('Detrainment', xy=(362, 400), color='purple')
-        
+        det_per = hist/sum(hist)*100; # percentages of detrainment ensumbles at levels
+
+        ax2 = fig.add_axes([0.705,0.1,0.1,0.8],facecolor=None)
+        ax2.barh( pbins[1:], det_per, color='lightgrey',edgecolor='k')
+        ax2.set_xlim([0,max(det_per)])
+        ax2.set_ylim([1030,150])
+        ax2.set_xlabel('Detrainment [%]')
+        ax2.grid()
+        ax2.set_zorder(2)
+
+        ax.plot( [400,400], [1100,0])
+        ax.annotate('Detrainment', xy=(362,320), color='dimgrey')
+        ax.annotate('ensemble: ' + str(ensemble_size*len(entrainment_rates)), xy=(364, 340), color='dimgrey')
+        ax.annotate('Detrainment', xy=(362,380), color='dimgrey')
+        ax.annotate(' scale: 0 - 2 km', xy=(365,400), color='dimgrey')
     
         # Overplots on the mess: undilute parcel and CAPE, etc. 
-        plt.plot( (1,1)*mse[0], (1,0)*(p[0]), color='g',linewidth=2)
-        #maxbindex = np.argmax(Tp - temperature)
-        #ax.annotate('CAPE='+str(int(CAPE.magnitude)), 
-        #              xy=(parcelh/1000., p[maxbindex]), color='g')
+        ax.plot( (1,1)*mse[0], (1,0)*(p[0]), color='g',linewidth=2)
 
         # Replot the sounding on top of all that mess
-        plt.plot(mse_s , p, color='r', linewidth=1.5) 
-        plt.plot(mse , p, color='b', linewidth=1.5) 
+        ax.plot(mse_s , p, color='r', linewidth=1.5) 
+        ax.plot(mse , p, color='b', linewidth=1.5) 
 
         # label LCL and LCF
-        plt.plot((mse_s[lcl_idx]+(-2000,2000)*units('joule/kilogram')), lcl_pressure+(0,0)*units('mbar') ,color='orange',linewidth=3)
-        plt.plot((mse_s[lfc_idx]+(-2000,2000)*units('joule/kilogram')), lfc_pressure+(0,0)*units('mbar') , color='magenta',linewidth=3)
+        ax.plot((mse_s[lcl_idx]+(-2000,2000)*units('joule/kilogram')), lcl_pressure+(0,0)*units('mbar') ,color='orange',linewidth=3)
+        ax.plot((mse_s[lfc_idx]+(-2000,2000)*units('joule/kilogram')), lfc_pressure+(0,0)*units('mbar') , color='magenta',linewidth=3)
   
     
     ### Internal waves (100m adiabatic displacements, assumed adiabatic: conserves s, sv, h). 
@@ -245,28 +253,109 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
         dhs = g*dZ + Cp_d*dT + Lv*dqs
 
         # Whiskers on the data plots
-        plt.plot( (mse_s[idx]+dhs*(-1,1)), p[idx]+dp*(-1,1), linewidth=3, color='r')  
-        plt.plot( (dse[idx]    *( 1,1)), p[idx]+dp*(-1,1), linewidth=3, color='r')  
-        plt.plot( (mse[idx]    *( 1,1)), p[idx]+dp*(-1,1), linewidth=3, color='b')  
+        ax.plot( (mse_s[idx]+dhs*(-1,1)), p[idx]+dp*(-1,1), linewidth=3, color='r')  
+        ax.plot( (dse[idx]    *( 1,1)), p[idx]+dp*(-1,1), linewidth=3, color='k')  
+        ax.plot( (mse[idx]    *( 1,1)), p[idx]+dp*(-1,1), linewidth=3, color='b')  
 
         # annotation to explain it 
-        if ilev == 600*ilev.units:
-            plt.plot(370*mse_s.units +dhs*(-1,1)/1000, p[idx]
+        if ilev == 400*ilev.units:
+            ax.plot(360*mse_s.units +dhs*(-1,1)/1000, 440*units('mbar')
                      +dp*(-1,1), linewidth=3, color='r')  
-            plt.annotate('+/- 10mb', xy=(370,600), fontsize=8)
-            plt.annotate('   adiabatic', xy=(370,630), fontsize=8)
-            plt.annotate(' displacement', xy=(370,660), fontsize=8)
+            ax.annotate('+/- 10mb', xy=(362,440), fontsize=8)
+            ax.annotate(' adiabatic displacement', xy=(362,460), fontsize=8)
     
-# Plot a crude histogram of parcel detrainment levels
+    # Plot a crude histogram of parcel detrainment levels
     # Text parts
-    plt.text(290,pressure[3],'RH (%)',fontsize=11,color='k')
-    plt.text(285,250,'CAPE = '+str(np.around(CAPE.magnitude,decimals=2))+' [J/kg]',fontsize=12,color='green')
-    plt.text(285,300,'CIN = '+str(np.around(CIN.magnitude,decimals=2))+' [J/kg]',fontsize=12,color='green')
-    plt.text(285,350,'LCL = '+str(np.around(lcl_pressure.magnitude,decimals=2))+' [hpa]',fontsize=12,color='orange')
-    plt.text(285,400,'LFC = '+str(np.around(lfc_pressure.magnitude,decimals=2))+' [hpa]',fontsize=12,color='magenta')
-    plt.text(285,450,'CWV = '+str(np.around(cwv.magnitude,decimals=2))+' [mm]',fontsize=12,color='deepskyblue')
-    plt.text(285,500,'CRH = '+str(np.around(crh.magnitude,decimals=2))+' [%]',fontsize=12,color='blue')
-    plt.legend(['DSE','MSE','SMSE'],fontsize=12,loc=1)
-    plt.xlim([280,400])
+    ax.text(290,pressure[3],'RH (%)',fontsize=11,color='k')
+    ax.text(285,200,'CAPE = '+str(np.around(CAPE.magnitude,decimals=2))+' [J/kg]',fontsize=12,color='green')
+    ax.text(285,250,'CIN = '+str(np.around(CIN.magnitude,decimals=2))+' [J/kg]',fontsize=12,color='green')
+    ax.text(285,300,'LCL = '+str(np.around(lcl_pressure.magnitude,decimals=2))+' [hpa]',fontsize=12,color='darkorange')
+    ax.text(285,350,'LFC = '+str(np.around(lfc_pressure.magnitude,decimals=2))+' [hpa]',fontsize=12,color='magenta')
+    ax.text(285,400,'CWV = '+str(np.around(cwv.magnitude,decimals=2))+' [mm]',fontsize=12,color='deepskyblue')
+    ax.text(285,450,'CRH = '+str(np.around(crh.magnitude,decimals=2))+' [%]',fontsize=12,color='blue')
+    ax.legend(['DSE','MSE','SMSE'],fontsize=12,loc=1)
     
-    return (plt)
+    ax.set_zorder(3)
+    
+    return (ax)
+
+def add_curves_Wyoming(ax,datetime,station,linewidth=1.0):
+    """
+    overlaying new curves of multiple soundings from Wyoming datasets
+    date: using datetime module. ex. datetime(2018,06,06) 
+    station: station name. ex. 'MFL' Miami, Florida
+    """
+    from siphon.simplewebservice.wyoming import WyomingUpperAir
+
+    date = datetime
+    station = station
+    df = WyomingUpperAir.request_data(date, station)
+    pressure = df['pressure'].values
+    Temp = df['temperature'].values
+    Temp_dew = df['dewpoint'].values
+    altitude = df['height'].values
+    q = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(Temp_dew*units('degC')),pressure*units('mbar'))
+    q = mpcalc.specific_humidity_from_mixing_ratio(q)
+    qs = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(Temp*units('degC')),pressure*units('mbar'))
+    
+    # specific energies
+    mse = mpcalc.moist_static_energy(altitude*units('meter'),Temp*units('degC'),q)
+    mse_s = mpcalc.moist_static_energy(altitude*units('meter'),Temp*units('degC'),qs)
+    dse = mpcalc.dry_static_energy(altitude*units('meter'),Temp*units('degC'))
+    # adding curves on the main axes
+    ax.plot(dse.magnitude, pressure, 'k', linewidth=linewidth)
+    ax.plot(mse.magnitude, pressure, 'b', linewidth=linewidth)
+    ax.plot(mse_s.magnitude, pressure, 'r', linewidth=linewidth)
+
+def add_curves(ax,pressure,temperature,mixing_ratio,linewidth=1.0):
+    """
+    overlaying new curves of multiple soundings from profiles
+    """
+    p  = pressure*units('mbar')
+    T  = temperature*units('degC')
+    q  = mixing_ratio*units('kilogram/kilogram')
+    qs = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(T),p)
+    Td = mpcalc.dewpoint(mpcalc.vapor_pressure(p,q)) # dewpoint 
+    Tp = mpcalc.parcel_profile(p,T[0],Td[0]).to('degC') # parcel profile
+
+    # Altitude based on the hydrostatic eq.
+    altitude = np.zeros((np.size(T)))*units('meter') # surface is 0 meter
+    for i in range(np.size(T)):
+        altitude[i] = mpcalc.thickness_hydrostatic(p[:i+1],T[:i+1]) # Hypsometric Eq. for height
+  
+    # Static energy calculations   
+    mse = mpcalc.moist_static_energy(altitude,T,q)
+    mse_s = mpcalc.moist_static_energy(altitude,T,qs)
+    dse = mpcalc.dry_static_energy(altitude,T)
+
+    ax.plot(dse, p, 'k', linewidth=linewidth)
+    ax.plot(mse, p, 'b', linewidth=linewidth)
+    ax.plot(mse_s, p, 'r', linewidth=linewidth)
+
+def add_RCEREF(ax,cooling=-1.3,heatflux=116):
+    ### Energy is area, draw reference boxes. 
+    RCEloc = 260
+    ax.set_xlim([250,390])
+
+    ax.plot([RCEloc,RCEloc],[0,1100], linewidth=0.5) ### thin reference line
+    ax.annotate('daily RCE', xy=(RCEloc,1045), horizontalalignment='center')
+
+    #### Radiative cooling reference
+    ax.fill([RCEloc  , RCEloc -1.3, RCEloc -1.3, RCEloc, RCEloc ],             
+            [1000 , 1000    , 200     , 200, 1000],             
+            linewidth=1, color='c', alpha=0.9)
+
+    ax.annotate(' cooling'+ str(cooling) + '$K/d$',  xy=(RCEloc-5, 300), color='c')
+    ax.annotate('$- 10^7 J m^{-2}$ per day', xy=(RCEloc-5, 330))
+
+    #### Surface flux reference
+    ax.fill([RCEloc  , RCEloc +11, RCEloc +11, RCEloc, RCEloc ],             
+            [1000 , 1000   , 910    , 910, 1000],             
+            linewidth=1, color='orange', alpha=0.5)
+
+    ax.annotate(' heat flux', xy=(RCEloc,890), color='orange')
+    ax.annotate(str(heatflux) + '$W m^{-2}$', xy=(RCEloc,940))
+    ax.annotate(' for 1 day ='     , xy=(RCEloc,965), fontsize=9)
+    ax.annotate('+ $10^7 J m^{-2}$'  , xy=(RCEloc, 990))
+
+
