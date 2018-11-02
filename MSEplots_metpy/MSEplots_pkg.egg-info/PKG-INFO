@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: MSEplots-pkg
-Version: 1.1.6
+Version: 1.1.7
 Summary: A package for static energy plots based on MetPy
 Home-page: https://github.com/weiming9115/Working-Space/tree/master/MSEplots_metpy
 Author: Wei-Ming Tsai

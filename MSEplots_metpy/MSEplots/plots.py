@@ -91,7 +91,7 @@ def theta_plots(pressure,temperature,mixing_ratio):
     plt.grid()
     return (plt)
 
-def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,entrain=False):
+def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,ent_rate=np.arange(0,2,0.05),entrain=False):
     """
     plotting the summarized static energy diagram with annotations and thermodynamic parameters
     """
@@ -173,7 +173,7 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
         H0STDEV = h0_std # J/kg
         h0offsets = np.sort(np.random.normal(0, H0STDEV, ensemble_size))*units('joule/kilogram')
         # Distribution of entrainment rates 
-        entrainment_rates = np.arange(0,2,0.05) /(units('km'))
+        entrainment_rates = ent_rate /(units('km'))
         
         for h0offset in h0offsets:
             
