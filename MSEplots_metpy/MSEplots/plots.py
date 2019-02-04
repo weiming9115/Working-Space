@@ -4,7 +4,7 @@ from datetime import datetime
 
 import metpy.calc as mpcalc
 from metpy.units import units
-from metpy.constants import Cp_d,Lv,Rd,g 
+from metpy.constants import Cp_d,Cp_v,Lv,Rd,g,Rv,Cv_d,Cv_v
 
 def find_nearest(array, value):
     array = np.asarray(array)
@@ -91,7 +91,8 @@ def theta_plots(pressure,temperature,mixing_ratio):
     plt.grid()
     return (plt)
 
-def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,ent_rate=np.arange(0,2,0.05),entrain=False):
+def msed_plots(pressure,temperature,mixing_ratio,altitude,h0_std=2000,ensemble_size=20,ent_rate=np.arange(0,2,0.05),
+               entrain=False):
     """
     plotting the summarized static energy diagram with annotations and thermodynamic parameters
     """
@@ -101,12 +102,21 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
     qs = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(T),p)
     Td = mpcalc.dewpoint(mpcalc.vapor_pressure(p,q)) # dewpoint 
     Tp = mpcalc.parcel_profile(p,T[0],Td[0]).to('degC') # parcel profile
-
+    
     # Altitude based on the hydrostatic eq.
-    altitude = np.zeros((np.size(T)))*units('meter') # surface is 0 meter
-    for i in range(np.size(T)):
-        altitude[i] = mpcalc.thickness_hydrostatic(p[:i+1],T[:i+1]) # Hypsometric Eq. for height
-  
+    if len(altitude) == len(pressure): # (1) altitudes for whole levels
+        altitude = altitude*units('meter')
+    elif len(altitude) == 1: # (2) known altitude where the soundings was launched
+        z_surf = altitude.copy()*units('meter'); # given altitude
+        altitude = np.zeros((np.size(T)))*units('meter') 
+        for i in range(np.size(T)):
+            altitude[i] = mpcalc.thickness_hydrostatic(p[:i+1],T[:i+1]) + z_surf # Hypsometric Eq. for height
+    else: 
+        print('***WARNING***: the altitude at the surface is assumed 0 meter, and altitudes are derived based on the hypsometirc equation')
+        altitude = np.zeros((np.size(T)))*units('meter') # surface is 0 meter
+        for i in range(np.size(T)):
+            altitude[i] = mpcalc.thickness_hydrostatic(p[:i+1],T[:i+1]) # Hypsometric Eq. for height
+            
     # Static energy calculations   
     mse = mpcalc.moist_static_energy(altitude,T,q)
     mse_s = mpcalc.moist_static_energy(altitude,T,qs)
@@ -159,10 +169,10 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
 
     ax.fill_betweenx(p,dse,mse,color='deepskyblue',alpha='0.5')
     ax.set_xlabel('Specific static energies: s, h, hs [kJ kg$^{-1}$]',fontsize=14)
-    ax.set_ylabel('Pressure [hpa]',fontsize=14)
+    ax.set_ylabel('Pressure [hPa]',fontsize=14)
     ax.set_xticks([280,300,320,340,360,380])
     ax.set_xlim([280,390])
-    ax.set_ylim(1030,150)
+    ax.set_ylim(1030,120)
     
     if entrain is True:
     # Depict Entraining parcels
@@ -178,37 +188,52 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
         for h0offset in h0offsets:
             
             h4ent = mse.copy(); h4ent[0] += h0offset;
-                
+            
             for eps in entrainment_rates: 
-
+                
                 M = np.exp(eps * (altitude-altitude[0])).to('dimensionless')
                 # dM is the mass contribution at each level, with 1 at the origin level. 
                 M[0] = 0
                 dM = np.gradient(M)
-
-                # parcel mass is a  sum of all the dM's at each level
-                # conserved linearly-mixed variables like h are weighted averages 
-                hent = np.cumsum(dM*h4ent) / np.cumsum(dM)
-    
+                # parcel mass is a sum of all the dM's at each level
+                # conserved linearly-mixed variables like h are weighted averages
+                if eps.magnitude == 0.0:
+                    hent = np.ones(len(h4ent))*h4ent[0] # no mixing 
+                else:
+                    hent = np.cumsum(dM*h4ent) / np.cumsum(dM)
                 # Boolean for positive buoyancy, and its topmost altitude (index) where curve is clippes
                 posboy  = (hent > mse_s); posboy[0] = True  # so there is always a detrainment level
-        
-                ELindex_ent = np.max(np.where(posboy))
+                
+                # defining the first EL by posboy as the detrainment layer, swiching from positive buoyancy to
+                # negative buoyancy (0 to 1) and skipping the surface
+                ELindex_ent = 0
+                for idx in range(len(posboy)-1):
+                    if posboy[idx+1] == 0 and posboy[idx] == 1 and idx > 0: 
+                        ELindex_ent = idx;break
+                        
                 # Plot the curve        
-                plt.plot( hent[0:ELindex_ent+2], p[0:ELindex_ent+2], linewidth=0.25, color='g')
+                plt.plot( hent[0:ELindex_ent+2], p[0:ELindex_ent+2], linewidth=0.6, color='g')
+                #plt.plot( hent[0:], p[0:], linewidth=0.6, color='g')
                 # Keep a list for a histogram plot (detrainment profile)  
                 if p[ELindex_ent].magnitude < lfc_pressure.magnitude: # buoyant parcels only
                     ELps.append( p[ELindex_ent].magnitude )
                 
         # Plot a crude histogram of parcel detrainment levels
-        NBINS = 50
-        hist, pbins = np.histogram(ELps[:], bins=NBINS)
+        NBINS = 20
+        pbins = np.linspace(1000,150,num=NBINS) # pbins for detrainment levels
+        hist = np.zeros((len(pbins)-1))
+        for x in ELps:
+            for i in range(len(pbins)-1):
+                if (x < pbins[i]) & (x >= pbins[i+1]):
+                    hist[i] += 1;break
+                    
         det_per = hist/sum(hist)*100; # percentages of detrainment ensumbles at levels
-
+        
         ax2 = fig.add_axes([0.705,0.1,0.1,0.8],facecolor=None)
-        ax2.barh( pbins[1:], det_per, color='lightgrey',edgecolor='k')
-        ax2.set_xlim([0,max(det_per)])
-        ax2.set_ylim([1030,150])
+        ax2.barh( pbins[1:], det_per, color='lightgrey',edgecolor='k',height=15*(20/NBINS))
+        ax2.set_xlim([0,100])
+        ax2.set_xticks([0,20,40,60,80,100])
+        ax2.set_ylim([1030,120])
         ax2.set_xlabel('Detrainment [%]')
         ax2.grid()
         ax2.set_zorder(2)
@@ -279,7 +304,7 @@ def msed_plots(pressure,temperature,mixing_ratio,h0_std=2000,ensemble_size=20,en
     
     return (ax)
 
-def add_curves_Wyoming(ax,datetime,station,linewidth=1.0):
+def add_curves_Wyoming(ax,datetime,station,linewidth=1.0,LH_Tdepend=False):
     """
     overlaying new curves of multiple soundings from Wyoming datasets
     date: using datetime module. ex. datetime(2018,06,06) 
@@ -299,15 +324,26 @@ def add_curves_Wyoming(ax,datetime,station,linewidth=1.0):
     qs = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(Temp*units('degC')),pressure*units('mbar'))
     
     # specific energies
-    mse = mpcalc.moist_static_energy(altitude*units('meter'),Temp*units('degC'),q)
-    mse_s = mpcalc.moist_static_energy(altitude*units('meter'),Temp*units('degC'),qs)
-    dse = mpcalc.dry_static_energy(altitude*units('meter'),Temp*units('degC'))
+    if LH_Tdepend == False:
+        mse = mpcalc.moist_static_energy(altitude*units('meter'),Temp*units('degC'),q)
+        mse_s = mpcalc.moist_static_energy(altitude*units('meter'),Temp*units('degC'),qs)
+        dse = mpcalc.dry_static_energy(altitude*units('meter'),Temp*units('degC'))
+    else:
+        # A short course in cloud physics, Roger and Yau (1989)
+        Lvt = (2500.8 - 2.36*T.magnitude + 0.0016*T.magnitude**2 - 
+              0.00006*T.magnitude**3)*units('joule/gram') # latent heat of evaporation
+        #Lf = 2834.1 - 0.29*T - 0.004*T**2                  # latent heat of fusion
+        
+        mse = Cp_d*T + g*altitude + Lvt*q
+        mse_s = Cp_d*T + g*altitude + Lvt*qs
+        dse = mpcalc.dry_static_energy(altitude,T)
+        
     # adding curves on the main axes
     ax.plot(dse.magnitude, pressure, 'k', linewidth=linewidth)
     ax.plot(mse.magnitude, pressure, 'b', linewidth=linewidth)
     ax.plot(mse_s.magnitude, pressure, 'r', linewidth=linewidth)
 
-def add_curves(ax,pressure,temperature,mixing_ratio,linewidth=1.0):
+def add_curves(ax,pressure,temperature,mixing_ratio,altitude,linewidth=1.0,LH_Tdepend=False):
     """
     overlaying new curves of multiple soundings from profiles
     """
@@ -319,18 +355,37 @@ def add_curves(ax,pressure,temperature,mixing_ratio,linewidth=1.0):
     Tp = mpcalc.parcel_profile(p,T[0],Td[0]).to('degC') # parcel profile
 
     # Altitude based on the hydrostatic eq.
-    altitude = np.zeros((np.size(T)))*units('meter') # surface is 0 meter
-    for i in range(np.size(T)):
-        altitude[i] = mpcalc.thickness_hydrostatic(p[:i+1],T[:i+1]) # Hypsometric Eq. for height
-  
-    # Static energy calculations   
-    mse = mpcalc.moist_static_energy(altitude,T,q)
-    mse_s = mpcalc.moist_static_energy(altitude,T,qs)
-    dse = mpcalc.dry_static_energy(altitude,T)
-
-    ax.plot(dse, p, 'k', linewidth=linewidth)
-    ax.plot(mse, p, 'b', linewidth=linewidth)
-    ax.plot(mse_s, p, 'r', linewidth=linewidth)
+    if len(altitude) == len(pressure): # (1) altitudes for whole levels
+        altitude = altitude*units('meter')
+    elif len(altitude) == 1: # (2) known altitude where the soundings was launched
+        z_surf = altitude.copy()*units('meter'); # given altitude
+        altitude = np.zeros((np.size(T)))*units('meter') 
+        for i in range(np.size(T)):
+            altitude[i] = mpcalc.thickness_hydrostatic(p[:i+1],T[:i+1]) + z_surf # Hypsometric Eq. for height
+    else: 
+        print('***WARNING***: the altitude at the surface is assumed 0 meter, and altitudes are derived based on the hypsometirc equation')
+        altitude = np.zeros((np.size(T)))*units('meter') # surface is 0 meter
+        for i in range(np.size(T)):
+            altitude[i] = mpcalc.thickness_hydrostatic(p[:i+1],T[:i+1]) # Hypsometric Eq. for height
+    
+    # specific energies 
+    if LH_Tdepend == False:
+        mse = mpcalc.moist_static_energy(altitude,T,q)
+        mse_s = mpcalc.moist_static_energy(altitude,T,qs)
+        dse = mpcalc.dry_static_energy(altitude,T)
+    else:
+        # A short course in cloud physics, Roger and Yau (1989)
+        Lvt = (2500.8 - 2.36*T.magnitude + 0.0016*T.magnitude**2 - 
+              0.00006*T.magnitude**3)*units('joule/gram') # latent heat of evaporation
+        #Lf = 2834.1 - 0.29*T - 0.004*T**2                  # latent heat of fusion
+        
+        mse = Cp_d*T + g*altitude + Lvt*q
+        mse_s = Cp_d*T + g*altitude + Lvt*qs
+        dse = mpcalc.dry_static_energy(altitude,T)
+        
+    ax.plot(dse, p, '--k', linewidth=linewidth)
+    ax.plot(mse, p, '--b', linewidth=linewidth)
+    ax.plot(mse_s, p, '--r', linewidth=linewidth)
 
 def add_RCEREF(ax,cooling=-1.3,heatflux=116):
     ### Energy is area, draw reference boxes. 
@@ -346,7 +401,6 @@ def add_RCEREF(ax,cooling=-1.3,heatflux=116):
             linewidth=1, color='c', alpha=0.9)
 
     ax.annotate(' cooling'+ str(cooling) + '$K/d$',  xy=(RCEloc-5, 300), color='c')
-    ax.annotate('$- 10^7 J m^{-2}$ per day', xy=(RCEloc-5, 330))
 
     #### Surface flux reference
     ax.fill([RCEloc  , RCEloc +11, RCEloc +11, RCEloc, RCEloc ],             
@@ -355,7 +409,52 @@ def add_RCEREF(ax,cooling=-1.3,heatflux=116):
 
     ax.annotate(' heat flux', xy=(RCEloc,890), color='orange')
     ax.annotate(str(heatflux) + '$W m^{-2}$', xy=(RCEloc,940))
-    ax.annotate(' for 1 day ='     , xy=(RCEloc,965), fontsize=9)
-    ax.annotate('+ $10^7 J m^{-2}$'  , xy=(RCEloc, 990))
+    
+def add_entropy(ax,pressure,temperature,mixing_ratio,ds=100,linewidth=1.0):
+    
+    "add entropy curves and rescale values to fit in by 0.5*entropy + ds"
 
+    p  = pressure*units('mbar')
+    T  = temperature*units('degC')
+    q  = mixing_ratio*units('kilogram/kilogram')
+    qs = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(T),p)
+    Td = mpcalc.dewpoint(mpcalc.vapor_pressure(p,q)) # dewpoint 
+    Tp = mpcalc.parcel_profile(p,T[0],Td[0]).to('degC') # parcel profile
 
+    # Reference: 
+    #Schubert, W. H., Ciesielski, P. E., & Johnson, R. H. (2018). Heat and Moisture Budget Analysis with an Improved Form of Moist Thermodynamics
+    
+    Tref = 273.15*units('kelvin')            # reference temperature (C to K conversion)
+    pref = 1000.0*units('mbar')              # reference pressure (mb)
+    Lref = Lv                                # vaporization heat  # liquid water heat capacity
+    Cl  =  4218*units('joule/kilogram/kelvin')      # liquid water heat capacity
+    eref = 6.106*units('mbar')               # sat p at Tref (mb)
+
+    L = Lref - (Cl - Cp_v)*T;   # L at temperature T
+
+    # specific entropy [joule/(kg*K)]
+    # sd : specific entropy of dry air
+    # sm1 : specific entropy of airborne mositure in state 1 (water vapor)
+    # sm2 : specific entropy of airborne mositure in state 2 (saturated water vapor)
+
+    def entropy(T,q,p,ds=100):
+        qtot = q;
+        qsat = mpcalc.mixing_ratio(mpcalc.saturation_vapor_pressure(T),p)
+        qv = np.minimum(qtot, qsat);       # IN CASE QTOT > QSAT
+        e = qv*p/(Rd/Rv +qv);
+        Tt = T.magnitude*units('kelvin') + Tref
+    
+        if sum(qtot) == 0:
+            entropy = (( Cp_d + qtot*Cl )*np.log( Tt/Tref ) - Rd*np.log( (p-e)/pref )).to('joule/kilogram/kelvin')
+        else:
+            entropy = (( Cp_d + qtot*Cl )*np.log( Tt/Tref ) - Rd*np.log( (p-e)/pref ) + 
+                       L*qv/( Tt ) - qv*Rv*np.log( qv/qsat )).to('joule/kilogram/kelvin');
+        return entropy
+    
+    sd = entropy(T,q*0,p)
+    sm1 = entropy(T,q,p)
+    sm2 = entropy(T,qs,p)
+
+    ax.plot(sd.magnitude*0.5+ds,p,'--k')
+    ax.plot(sm1.magnitude*0.5+ds,p,'--b')
+    ax.plot(sm2.magnitude*0.5+ds,p,'--r')
