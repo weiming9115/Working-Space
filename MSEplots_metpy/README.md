@@ -3,11 +3,11 @@
 ------
 A package built for the MSE analysis of sounding data/ model output which provides required vertical profiles of thermodynamic parameters.
 
-,,,python
+'''python
 import MSEplots as mpt
 :
 mpt.msedplot(T,P,q)
-,,,
+'''
 
 1. Required paramters: Air temperature, Mixing ratio, Pressure, Altitude [optional]. NOT specifically for sounding data!
 2. Functions are provided for deriving thermodynamic variables eg. potential tmeperature and static energy. All calculations included depend on the metpy.calc.thermo module.
