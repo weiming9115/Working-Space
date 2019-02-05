@@ -8,7 +8,7 @@ from MSEplots import plots as mpt
 :
 mpt.msedplot(T,P,q)
 ```
-![Image description](./demo.png =250x)
+![Image description](./demo.png width="200" height="200")
 
 1. Required paramters: Air temperature, Mixing ratio, Pressure, Altitude [optional]. NOT specifically for sounding data!
 2. Functions are provided for deriving thermodynamic variables eg. potential tmeperature and static energy. All calculations included depend on the metpy.calc.thermo module.
