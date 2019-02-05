@@ -6,7 +6,7 @@ A package built for the MSE analysis of sounding data/ model output which provid
 ```python
 from MSEplots import plots as mpt
 :
-mpt.msedplot(T,P,q)
+mpt.msed_plots(pressure,Temp,q,altitude,ent_rate=np.arange(0,2,0.05),entrain=True)
 ```
 <img src="https://github.com/weiming9115/Working-Space/blob/master/MSEplots_metpy/demo.png" width="550" height="400">
 
