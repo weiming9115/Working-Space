@@ -1,6 +1,6 @@
 ### MSEplots project
 #### pip install MSEplots-pkg
-[![Generic badge](https://img.shields.io/badge/Python-<COLOR>.svg)]
+![Generic badge](https://img.shields.io/badge/Python-<COLOR>.svg)
 ------
 A Python package built for the moist static energy (MSE) analysis of sounding data/ model output which provides required vertical profiles of thermodynamic parameters. 
 
