@@ -123,7 +123,7 @@ def msed_plots(pressure,temperature,mixing_ratio,altitude,h0_std=2000,ensemble_s
     dse = mpcalc.dry_static_energy(altitude,T)
 
     # Water vapor calculations
-    p_PWtop = max(200*units.mbar, min(p) + 1*units.mbar) # integrating until 200mb 
+    p_PWtop = min(p) # integrating until top 
     cwv = mpcalc.precipitable_water(Td,p,top=p_PWtop) # column water vapor [mm]
     cwvs = mpcalc.precipitable_water(T,p,top=p_PWtop) # saturated column water vapor [mm]
     crh = (cwv/cwvs)*100. # column relative humidity [%]
