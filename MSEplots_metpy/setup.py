@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="MSEplots_pkg",
-    version="1.2.1",
+    version="2.0.1",
     author="Wei-Ming Tsai",
     author_email="wxt108@rsmas.miami.edu",
     description="A package for static energy plots based on MetPy",
