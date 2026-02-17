@@ -90,8 +90,8 @@ BL,cape: undilute CAPE-like instability, implying the buoyancy of a parcel as it
    :height: 200px
    :alt: Equation Image
 
-- BL,cape: undilute CAPE-like instability, implying the buoyancy of a parcel as it rises without entrainment.
-- BL,subsat: the dilution of the parcel buoyancy through entrainment effects from the lower free troposphere, expressed by the subsaturation.
+- **BL,cape**: undilute CAPE-like instability, implying the buoyancy of a parcel as it rises without entrainment.
+- **BL,subsat**: the dilution of the parcel buoyancy through entrainment effects from the lower free troposphere, expressed by the subsaturation.
 
 Tropical MCSs are identified using outgoing longwave radiative flux and precipitation, following similar definitions in PyFLEXTRKR. The default MCS identification of the POD is “snapshot-based”, while users can implement their own MCS 2-D mask datasets and skip the step of identifying MCSs (see settings.jsonc).
 
