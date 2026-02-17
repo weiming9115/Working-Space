@@ -6,15 +6,19 @@ This POD provides diagnostics of tropical mesoscale convective systems (MCSs) an
 
 - **MCS frequency & MCS precipitation contribution**
 
-.. image:: ../mcs_utils/obs_ref/precipitation_MCScontribution.png
-   :width: 70%
+.. image:: ./precipitation_MCScontribution.png
+   :width: 800px
+   :height: 300px
+   :alt: Prec Image
 
     The default “snapshot-based” MCS definition identifies a rainy cold cloud with an area greater than 40,000 km². As a result, the statistics primarily reflect MCS characteristics at their mature stage. This may help explain the relatively lower contribution of MCSs to total precipitation in the observational reference compared with values reported in the literature. 
 
 - **2-D joint histogram and conditioanlly-averaged precipitation**: 
 
-.. image:: ../mcs_utils/obs_ref/BLprecip_capesubsat_merged_2005-2014.png
-   :width: 70%
+.. image:: ./BLprecip_capesubsat_merged_2005-2014.png
+   :width: 800px
+   :height: 300px
+   :alt: BL Image
 
     precipitation sensitivity to BL,cape and BL,subsat for conditions associated with MCS, non-MCS deep, and others. For example, models tend to exhibit enhanced conditionally averaged precipitation when BL,subsat ≈ 0, while showing comparatively weak sensitivity to BL,cape. This behavior suggests that precipitation in models is triggered primarily under near-saturated lower-free troposphere, implying that convection parameterization schemes (where present) may play a reduced role relative to what is inferred from observations. 
 
@@ -82,7 +86,7 @@ Following Ahmed and Neelin (2021), an **empirical buoyancy measure** is calculat
 BL,cape: undilute CAPE-like instability, implying the buoyancy of a parcel as it rises without entrainment BL,subsat: the dilution of the parcel buoyancy through entrainment effects from the lower free troposphere, expressed by the subsaturation.
 
 .. image:: ./BL_equation.png
-   :width: 750px
+   :width: 800px
    :height: 300px
    :alt: Equation Image
 
