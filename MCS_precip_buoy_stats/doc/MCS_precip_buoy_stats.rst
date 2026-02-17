@@ -15,7 +15,7 @@ This POD provides diagnostics of tropical mesoscale convective systems (MCSs) an
 
 - **2-D joint histogram and conditioanlly-averaged precipitation**: 
 
-    .. image:: ./BLprecip_capesubsat_merged_2005-2014.png
+    .. image:: ./BLprecip_capesubsat_merged_2005-2014.ocean.png
        :width: 850px
        :height: 250px
        :alt: BL Image
