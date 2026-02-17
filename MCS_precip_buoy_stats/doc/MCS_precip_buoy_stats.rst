@@ -99,6 +99,6 @@ Tropical MCSs are identified using outgoing longwave radiative flux and precipit
 
 we adopt parameters described in PyFLEXTRKR (Feng et al., 2021;2023) to identify connected cloud objects using brightness temperature. Brightness temperature is converted from outgoing longwave radiation following Ohring et al. (1984)
 
-- Cold cloud size > 40,000 km2; cold cloud (Tb < 241 K)
-- Precipitation feature (> 1,000 km2, precip > 0.5 mm/hr)
+- Cold cloud size > 40,000 km²; cold cloud (Tb < 241 K)
+- Precipitation feature (> 1,000 km², precip > 0.5 mm/hr)
 - Existence of core cloud (Tb < 225 K, at least one pixel)
