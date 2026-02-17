@@ -76,9 +76,9 @@ This POD provides diagnostics of tropical mesoscale convective systems (MCSs) an
 
 **Reference** 
 
-Ahmed, F., & Neelin, J. D. (2021). A process‐oriented diagnostic to assess precipitation‐thermodynamic relations and application to CMIP6 models. Geophysical Research Letters, 48(14).
+    Ahmed, F., & Neelin, J. D. (2021). A process‐oriented diagnostic to assess precipitation‐thermodynamic relations and application to CMIP6 models. Geophysical Research Letters, 48(14).
 
-Tsai, W.-M., F. Ahmed, J. D. Neelin, Zhe Feng, and L. Ruby Leung (2026). Buoyancy-Precipitation Coupling in the Life Cycle of Tropical Mesoscale Convective Systems, Geophysical Research Letters, under review
+    Tsai, W.-M., F. Ahmed, J. D. Neelin, Zhe Feng, and L. Ruby Leung (2026). Buoyancy-Precipitation Coupling in the Life Cycle of Tropical Mesoscale Convective Systems, Geophysical Research Letters, under review
 
 **Methodology** 
 
