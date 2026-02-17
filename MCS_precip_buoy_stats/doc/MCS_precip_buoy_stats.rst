@@ -11,7 +11,7 @@ This POD provides diagnostics of tropical mesoscale convective systems (MCSs) an
    :height: 300px
    :alt: Prec Image
 
-    The default “snapshot-based” MCS definition identifies a rainy cold cloud with an area greater than 40,000 km². As a result, the statistics primarily reflect MCS characteristics at their mature stage. This may help explain the relatively lower contribution of MCSs to total precipitation in the observational reference compared with values reported in the literature. 
+The default “snapshot-based” MCS definition identifies a rainy cold cloud with an area greater than 40,000 km². As a result, the statistics primarily reflect MCS characteristics at their mature stage. This may help explain the relatively lower contribution of MCSs to total precipitation in the observational reference compared with values reported in the literature. 
 
 - **2-D joint histogram and conditioanlly-averaged precipitation**: 
 
@@ -20,7 +20,7 @@ This POD provides diagnostics of tropical mesoscale convective systems (MCSs) an
    :height: 300px
    :alt: BL Image
 
-    precipitation sensitivity to BL,cape and BL,subsat for conditions associated with MCS, non-MCS deep, and others. For example, models tend to exhibit enhanced conditionally averaged precipitation when BL,subsat ≈ 0, while showing comparatively weak sensitivity to BL,cape. This behavior suggests that precipitation in models is triggered primarily under near-saturated lower-free troposphere, implying that convection parameterization schemes (where present) may play a reduced role relative to what is inferred from observations. 
+precipitation sensitivity to BL,cape and BL,subsat for conditions associated with MCS, non-MCS deep, and others. For example, models tend to exhibit enhanced conditionally averaged precipitation when BL,subsat ≈ 0, while showing comparatively weak sensitivity to BL,cape. This behavior suggests that precipitation in models is triggered primarily under near-saturated lower-free troposphere, implying that convection parameterization schemes (where present) may play a reduced role relative to what is inferred from observations. 
 
     Two regimes (indicated by the triangle and rectangle) are highlighted: the highly buoyant regime, which typically exhibits a sharp enhancement of precipitation with increasing BL buoyancy, and the low-BL,cape, near-saturated regime, which is more commonly associated with stratiform precipitation.
 
