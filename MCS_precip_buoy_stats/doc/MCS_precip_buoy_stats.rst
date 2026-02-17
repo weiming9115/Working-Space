@@ -87,7 +87,7 @@ BL,cape: undilute CAPE-like instability, implying the buoyancy of a parcel as it
 
 .. image:: ./BL_equation.png
    :width: 700px
-   :height: 250px
+   :height: 200px
    :alt: Equation Image
 
 - BL,cape: undilute CAPE-like instability, implying the buoyancy of a parcel as it rises without entrainment.
