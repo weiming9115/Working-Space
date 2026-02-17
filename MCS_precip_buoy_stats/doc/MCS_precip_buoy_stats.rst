@@ -82,7 +82,7 @@ Following Ahmed and Neelin (2021), an **empirical buoyancy measure** is calculat
 BL,cape: undilute CAPE-like instability, implying the buoyancy of a parcel as it rises without entrainment BL,subsat: the dilution of the parcel buoyancy through entrainment effects from the lower free troposphere, expressed by the subsaturation.
 
 .. image:: ./BL_equation.png
-  :scale: 50%
+  :scale: 25%
 
 - BL,cape: undilute CAPE-like instability, implying the buoyancy of a parcel as it rises without entrainment.
 - BL,subsat: the dilution of the parcel buoyancy through entrainment effects from the lower free troposphere, expressed by the subsaturation.
