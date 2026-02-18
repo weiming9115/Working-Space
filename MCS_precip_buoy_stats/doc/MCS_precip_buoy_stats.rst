@@ -22,7 +22,7 @@ This POD provides diagnostics of tropical mesoscale convective systems (MCSs) an
 
     precipitation sensitivity to BL,cape and BL,subsat for conditions associated with MCS, non-MCS deep, and others. For example, models tend to exhibit enhanced conditionally averaged precipitation when BL,subsat ≈ 0, while showing comparatively weak sensitivity to BL,cape. This behavior suggests that precipitation in models is triggered primarily under near-saturated lower-free troposphere, implying that convection parameterization schemes (where present) may play a reduced role relative to what is inferred from observations. 
 
-    Two regimes (indicated by the triangle and rectangle) are highlighted: the highly buoyant regime, which typically exhibits a sharp enhancement of precipitation with increasing BL buoyancy, and the low-BL,cape, near-saturated regime, which is more commonly associated with stratiform precipitation.
+    Two regimes (indicated by the triangle and rectangle) are highlighted: the highly buoyant regime (I), which typically exhibits a sharp enhancement of precipitation with increasing BL buoyancy, and the low-BL,cape, near-saturated regime (II), which is more commonly associated with stratiform precipitation.
 
 **Required Variables (settings.jsonc)**
 
