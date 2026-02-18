@@ -2,7 +2,7 @@
 
 This POD provides diagnostics of tropical mesoscale convective systems (MCSs) and their thermodynamic environments, informed by an empirical buoyancy measure (BL). Specifically, these diagnostics are designed to evaluate model performance in representing basic spatial-temporal characteristics of tropical MCSs and associated precipitation responses to the buoyancy measure under MCS and non-MCS conditions.
 
-**Interpret Results**
+**Interpretations of Results**
 
 - **MCS frequency & MCS precipitation contribution**
 
